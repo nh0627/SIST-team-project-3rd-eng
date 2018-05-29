@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mapper.InstructorMapper">
+
+	<select id="instructorList" resultType="com.test.domain.Instructor">
+		SELECT name_, ssn, phone, available_subjects, initial_reg_date 
+		FROM  instructor_available_view i1, login l 
+		WHERE i1.instructor_id=l.login_id 
+		AND i1.instructor_id= #{instructor_id}
+	</select>
+	
+	<select id="courseScheduleList" resultType="com.test.domain.Instructor">
+		SELECT os_id, bs_name AS os_name, os_start_date, os_end_date, bc_title AS oc_title, oc_start_date, oc_end_date, classroom_name, 
+			textbook_title, publisher, isbn, registerred_number, course_status 
+		FROM instructor_2_1_view 
+		WHERE instructor_id= #{instructor_id} 
+		ORDER BY os_id
+	</select>
+	
+	<select id="studentSearch" resultType="com.test.domain.Instructor">
+		SELECT student_id, name_, phone, initial_reg_date, learning_status, course_end_date 
+		FROM instructor_2_2_view 
+		WHERE instructor_id= #{instructor_id} AND os_id= #{os_id}  
+		ORDER BY student_id
+	</select>
+	
+	<select id="percentage_addible_osList" resultType="com.test.domain.Instructor">
+		SELECT os_id, bs_name AS os_name, os_start_date, os_end_date, oc_title, oc_start_date, oc_end_date, classroom_name, 
+			textbook_title, publisher, isbn, attendance_percentage, writing_percentage, practice_percentage, registerred_number, 
+			DECODE((SELECT COUNT(*) FROM scores WHERE os_id=v.os_id),0,'Y','N') AS delete_status 
+			FROM instructor_31_view v 
+			WHERE instructor_id=  #{os_id} 
+			ORDER BY os_id
+	</select>
+	
+	<select id="percentage_deletable_osList" resultType="com.test.domain.Instructor">
+		SELECT os_id, bs_name AS os_name, os_start_date, os_end_date, oc_title, oc_start_date, oc_end_date, classroom_name, 
+			textbook_title, publisher, isbn, attendance_percentage,writing_percentage,practice_percentage,registerred_number 
+		FROM instructor_32_1_view 
+		WHERE instructor_id = #{instructor_id} 
+		ORDER BY os_id
+	</select>
+	
+	<select id="exam_osList" resultType="com.test.domain.Instructor">
+		SELECT os_id, bs_name AS os_name, os_start_date, os_end_date, oc_title, oc_start_date, oc_end_date, classroom_name, 
+			textbook_title, publisher, isbn, exam_date, exam_file, 
+			DECODE((SELECT COUNT(*) FROM scores WHERE os_id=v.os_id),0,'Y','N') AS delete_status 
+		FROM instructor_33_1_view v 
+		WHERE instructor_id= #{instructor_id} 
+		ORDER BY os_id
+	</select>
+	
+	
+	<select id="score_osList" resultType="com.test.domain.Instructor">
+		SELECT os_id, bs_name AS os_name, os_start_date, os_end_date, oc_title, oc_start_date, oc_end_date, classroom_name, textbook_title, 
+			publisher, isbn, attendance_percentage, writing_percentage, practice_percentage, exam_date, score_added_number 
+		FROM instructor_41_1_view WHERE instructor_id= #{instructor_id} 
+		AND os_end_date &lt;=SYSDATE AND attendance_percentage	&gt;=20 AND exam_date IS NOT NULL ORDER BY os_id
+	</select>
+	
+	<select id="scoreSearch" resultType="com.test.domain.Instructor">
+		SELECT student_id, name_, phone, learning_status, course_end_date, attendance_score, writing_score, 
+			practice_score, total_score, DECODE(attendance_score, NULL, 'Y', 'N') AS delete_status FROM instructor_41_2_view 
+		WHERE instructor_id= #{instructor_id} AND os_id= #{os_id} 
+		ORDER BY student_id
+	</select>
+		
+	<insert id="percentageAdd">
+		INSERT INTO score_percentages(os_id, attendance_percentage, writing_percentage, practice_percentage) 
+		VALUES(#{os_id}, #{attendance_percentage}, #{writing_percentage}, #{practice_percentage})
+	</insert>
+	
+	<insert id="examAdd">
+		INSERT INTO exams(os_id, exam_date, exam_file) VALUES(#{os_id}, #{exam_date}, #{exam_file})
+	</insert>
+
+	<select id="scorePercentage" resultType="com.test.domain.Instructor">
+		SELECT attendance_percentage, writing_percentage, practice_percentage 
+		FROM score_percentages 
+		WHERE os_id= #{os_id}
+	</select>
+
+	<insert id="scoreAdd">
+		INSERT INTO scores(score_id, attendance_score, writing_score, practice_score, student_id, os_id) 
+		VALUES(CONCAT('SC', LPAD(SUBSTR(NVL((SELECT MAX(score_id) FROM scores),'SC000'),3)+1, 3, 0)), #{attendance_score}, #{writing_score}, #{practice_score}, #{student_id}, #{os_id})
+	</insert>
+	
+	<delete id ="percentageDelete">
+		DELETE FROM instructor_32_2_view WHERE os_id= #{os_id} AND instructor_id= #{instructor_id}
+	</delete>
+	
+	<delete id ="scoreDelete">
+		DELETE FROM scores WHERE score_id = (SELECT score_id FROM instructor_43_2_view WHERE instructor_id= #{instructor_id} AND student_id= #{student_id} AND os_id= #{os_id})	
+	</delete>
+	
+	
+	<delete id ="examInfoDelete">
+		DELETE FROM instructor_33_2_view WHERE os_id= #{os_id} AND instructor_id= #{instructor_id}
+	</delete>
+		
+	<select id="ocosInfo" resultType="com.test.domain.Instructor">
+		SELECT oc_title, os_name, os_start_date, os_end_date 
+		FROM oc_os_login_detail_view 
+		WHERE os_id= #{os_id}
+	</select>
+
+</mapper>  

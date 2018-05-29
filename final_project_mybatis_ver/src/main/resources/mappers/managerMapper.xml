@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mapper.ManagerMapper">
+			
+	<select id="loginInfo" resultType="com.test.domain.Manager">
+		SELECT name_, ssn, phone, initial_reg_date,access_id, login_id, profile_img, pw 
+		FROM login 
+		WHERE login_id= #{login_id}
+	</select>
+	
+	<select id="ocList_ds" resultType="com.test.domain.Manager">
+		SELECT oc_id, oc_title, oc_start_date, oc_end_date, classroom_name, subject_offered_number, registerred_number, delete_status, course_status 
+		FROM manager_33_view 
+		ORDER BY oc_id
+	</select>
+	
+	<select id="ocAddibleList" resultType="com.test.domain.Manager">
+		<![CDATA[
+		SELECT oc_id, oc_title, oc_start_date, oc_end_date, classroom_name, subject_offered_number, registerred_number 
+		FROM oc_detail_count_view
+		WHERE oc_start_date > SYSDATE 
+		ORDER BY oc_id
+		]]>
+	</select>
+	
+	<select id="oc_osSearch41" resultType="com.test.domain.Manager">
+		SELECT os_id, bs_name AS os_name, os_start_date, os_end_date, textbook_title, name_ 
+		FROM oc_de_login_percentages_view 
+		AND os.oc_id = #{os.oc_id}
+		ORDER BY os_id
+	</select>
+	
+	<select id="instructorList41" resultType="com.test.domain.Manager">
+		SELECT idv.instructor_id, name_, ssn, phone, available_subjects, initial_reg_date 
+		FROM instructor_detail_view idv, instructor_available_view iav 
+		WHERE idv.instructor_id = iav.instructor_id 
+		ORDER BY idv.instructor_id	
+	</select>	
+	
+	<select id="osList" resultType="com.test.domain.Manager">
+		SELECT oc_id, oc_title, oc_start_date, oc_end_date, classroom_name, os_id, os_name, os_start_date, os_end_date, textbook_title, name_ 
+		FROM oc_os_login_detail_view 
+		ORDER BY os_id
+	</select>
+	
+	<select id="osDeletableList" resultType="com.test.domain.Manager">
+		<![CDATA[
+		SELECT os_id, os_name, os_start_date, os_end_date, oc_title, oc_start_date, oc_end_date, textbook_title, classroom_name, name_ 
+		FROM oc_os_login_detail_view 
+		WHERE oc_start_date > SYSDATE 
+		ORDER BY os_id
+		]]>
+	</select>
+	
+	<select id="studentList" resultType="com.test.domain.Manager">
+		<![CDATA[
+		SELECT student_id, name_, ssn, phone, initial_reg_date, registration_count, profile_img, DECODE((SELECT COUNT(*) FROM oc_de_co_his_drop_view WHERE oc_start_date < SYSDATE AND learning_status = '수료 예정' AND student_id=v.student_id),0,'N','Y') AS dropout_status, DECODE((SELECT COUNT(*) FROM oc_de_co_his_drop_view WHERE oc_start_date > SYSDATE AND student_id=v.student_id),0,'N','Y') AS cancel_status 
+		FROM manager_52_view v 
+		ORDER BY student_id
+		]]> 
+	</select>
+	
+	<select id="bcList" resultType="com.test.domain.Manager">
+		SELECT bc_id, bc_title 
+		FROM basic_courses 
+		ORDER BY bc_id
+	</select>
+	
+	<select id="bcList_ds" resultType="com.test.domain.Manager">
+		SELECT bc_id, bc_title, DECODE((SELECT COUNT(*) FROM offered_courses WHERE bc_id=bc.bc_id),0,'Y','N') delete_status 
+		FROM basic_courses bc 
+		ORDER BY bc_id
+	</select>
+	
+	<select id="classroomList" resultType="com.test.domain.Manager">
+		SELECT classroom_id, classroom_name, maximum, manager_id 
+		FROM classrooms 
+		ORDER BY classroom_id
+	</select>
+	
+	<select id="classroomList_ds" resultType="com.test.domain.Manager">
+		SELECT classroom_id, classroom_name, maximum, manager_id, DECODE((SELECT COUNT(*) FROM offered_courses WHERE classroom_id=cl.classroom_id), 0, 'Y', 'N') delete_status 
+		FROM classrooms cl 
+		ORDER BY classroom_id
+	</select>
+	
+	<select id="ocInfo" resultType="com.test.domain.Manager">
+		SELECT oc_id, oc_title, oc_start_date, oc_end_date, delete_status 
+		FROM oc_detail_view 
+		WHERE oc_id=#{oc_id}	
+	</select>
+	
+	<select id="instructorInfo" resultType="com.test.domain.Manager">
+		SELECT login_id, name_, ssn 
+		FROM login
+		WHERE login_id=#{instructor_id}
+	</select>
+	
+	<select id="oc_osSearch" resultType="com.test.domain.Manager">
+		SELECT os_id, os_name, os_start_date, os_end_date, textbook_title, publisher, isbn, name_, available_subjects, delete_status, profile_img 
+		FROM OS_DE_LOGIN_PERCENTAGES_VIEW 
+		WHERE oc_id=#{oc_id} 
+		ORDER BY os_id
+	</select>
+	
+	<select id="bsList" resultType="com.test.domain.Manager">
+		SELECT bs_id, bs_name 
+		FROM basic_subjects 
+		ORDER BY bs_id
+	</select>
+	
+	<select id="bsList_ds" resultType="com.test.domain.Manager">
+		SELECT bs_id, bs_name, 
+		CASE 
+			WHEN ((SELECT COUNT(*) FROM available_subjects WHERE bs_id=bs.bs_id)=0)AND ((SELECT COUNT(*) FROM offered_subjects WHERE bs_id=bs.bs_id)=0) 
+				THEN 'Y' ELSE 'N' END delete_status 
+		FROM basic_subjects bs 
+		ORDER BY bs_id
+	</select>	
+	
+	<select id="textbookList" resultType="com.test.domain.Manager">
+		SELECT textbook_id, textbook_title, publisher 
+		FROM textbooks 
+		ORDER BY textbook_id
+	</select>
+	
+	<select id="textbookList_ds" resultType="com.test.domain.Manager">
+		SELECT textbook_id, textbook_title, publisher, isbn, DECODE((SELECT COUNT(*) FROM offered_subjects WHERE textbook_id=tx.textbook_id),0,'Y','N') delete_status 
+		FROM textbooks tx 
+		ORDER BY textbook_id
+	</select>
+	
+	<select id="managerSearch" resultType="com.test.domain.Manager">
+		SELECT manager_id 
+		FROM managers 
+		WHERE manager_id=#{manager_id}
+	</select>
+	
+	<select id="instructorList" resultType="com.test.domain.Manager">
+		SELECT instructor_id, name_, ssn, phone, available_subjects, instructor_reg_date, profile_img 
+		FROM manager_22_1_view 
+		ORDER BY instructor_id
+	</select>
+	
+	<select id="availableSubjectList" resultType="String">
+		SELECT bs_id 
+		FROM available_subjects 
+		WHERE instructor_id = #{instructor_id}
+	</select>
+	
+	<select id="instructorSearch" resultType="com.test.domain.Manager">
+		SELECT instructor_id, name_, ssn, phone, instructor_reg_date, available_subjects 
+		FROM instructor_login_avail_view 
+		WHERE instructor_id IN (SELECT login_id FROM login WHERE name_=#{name_} AND ssn=#{ssn}) 
+		ORDER BY instructor_id
+	</select>
+	
+	<select id="courseInfoList" resultType="com.test.domain.Manager">
+		SELECT os_id, os_name, os_start_date, os_end_date, oc_title, oc_start_date, oc_end_date, classroom_name, course_status, instructor_id, name_, ssn 
+		FROM manager_22_2_view 
+		WHERE instructor_id=#{instructor_id}
+		ORDER BY os_id
+	</select>
+	
+	<select id="instructorList_ds" resultType="com.test.domain.Manager">
+		SELECT instructor_id, name_, ssn, phone, profile_img, available_subjects, instructor_reg_date, delete_status 
+		FROM manager_23_view 
+		ORDER BY instructor_id
+	</select>
+	
+	<select id="ocList" resultType="com.test.domain.Manager">
+		SELECT oc_id, oc_title, oc_start_date, oc_end_date, classroom_name, subject_offered_number, registerred_number 
+		FROM oc_detail_count_view 
+		ORDER BY oc_id
+	</select>
+	
+	<select id="ocDate" resultType="com.test.domain.Manager">
+		SELECT oc_start_date, oc_end_date 
+		FROM offered_courses 
+		WHERE oc_id=#{oc_id}
+	</select>
+	
+	<select id="oc_studentSearch" resultType="com.test.domain.Manager">
+		SELECT student_id, name_, ssn, phone, initial_reg_date, learning_status, course_end_date 
+		FROM manager_32_2_view 
+		WHERE oc_id=#{oc_id} 
+		ORDER BY student_id
+	</select>
+	
+	<select id="getinstructor" resultType="com.test.domain.Manager">
+		SELECT instructor_id, name_ 
+		FROM instructor_detail_view 
+		WHERE bs_id=#{bs_id}
+	</select>
+
+	<select id="studentCount" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM manager_52_view
+	</select>
+	
+	<select id="studentInfoSearchPaging" resultType="com.test.domain.Manager">
+		 <if test="key == 'ALL'">
+		 <![CDATA[
+			SELECT student_id, name_, ssn, phone, initial_reg_date, registration_count, profile_img, dropout_status, cancel_status
+			FROM (SELECT student_id, name_, ssn, phone, initial_reg_date, registration_count, profile_img, 
+					DECODE((SELECT COUNT(*) FROM oc_de_co_his_drop_view WHERE oc_start_date < SYSDATE AND learning_status = '수료 예정' AND student_id=v.student_id),0,'N','Y') AS dropout_status, 
+					DECODE((SELECT COUNT(*) FROM oc_de_co_his_drop_view WHERE oc_start_date > SYSDATE AND student_id=v.student_id),0,'N','Y') AS cancel_status, 
+					row_number() OVER (ORDER BY student_id) rnk 
+				    FROM student_detail_view v)
+			WHERE rnk BETWEEN #{start_row} AND #{end_row}
+			]]>
+		</if>		
+		<if test="key != 'ALL'">
+		<![CDATA[
+			SELECT student_id, name_, ssn, phone, initial_reg_date, registration_count, profile_img, 
+				DECODE((SELECT COUNT(*) FROM oc_de_co_his_drop_view WHERE oc_start_date < SYSDATE AND learning_status = '수료 예정' AND student_id=v.student_id),0,'N','Y') AS dropout_status, 
+				DECODE((SELECT COUNT(*) FROM oc_de_co_his_drop_view WHERE oc_start_date > SYSDATE AND student_id=v.student_id),0,'N','Y') AS cancel_status 
+			FROM student_detail_view v
+			]]>
+			<if test="key == 'student_id'">
+			 WHERE student_id = #{value}
+			</if>
+			<if test="key == 'name_'">
+			 WHERE INSTR(name_, #{value}) > 0 
+			</if>
+			<if test="key == 'ssn'">
+			 WHERE INSTR(ssn, #{value}) > 0
+			</if>
+			<if test="key == 'phone'">
+			 WHERE INSTR(phone, #{value}) > 0
+			</if>
+		</if>
+	 ORDER BY student_id -->
+	</select>
+	
+	<select id="ocList51" resultType="com.test.domain.Manager">
+		SELECT oc_id, oc_title, oc_start_date, oc_end_date, classroom_name, subject_offered_number, registerred_number 
+		FROM oc_detail_count_view WHERE oc_start_date > SYSDATE 
+		ORDER BY oc_id
+	</select>	
+	
+	<select id="studentInfoSearch" resultType="com.test.domain.Manager">
+		SELECT student_id, name_, ssn, phone, initial_reg_date, registration_count, profile_img 
+		FROM student_detail_view
+		<if test="key == 'student_id'">
+		 WHERE student_id = #{value}
+		</if>
+		<if test="key == 'name_'">
+		<![CDATA[ WHERE INSTR(name_, #{value}) > 0  ]]>
+		</if>
+		<if test="key == 'ssn'">
+		<![CDATA[ WHERE INSTR(ssn, #{value}) > 0 ]]>
+		</if>
+		<if test="key == 'phone'">
+		<![CDATA[ WHERE INSTR(phone, #{value}) > 0 ]]>
+		</if>
+	</select>
+	
+	<select id="ocSearchToCancle" resultType="com.test.domain.Manager">
+		SELECT oc_id, oc_title, oc_start_date, oc_end_date, classroom_name, learning_status, course_end_date 
+		FROM oc_de_co_his_drop_view WHERE oc_start_date > SYSDATE 
+		AND student_id = #{student_id} 
+		ORDER BY oc_id
+	</select>	
+		
+	<select id="ocSearchForDropout" resultType="com.test.domain.Manager">
+		<![CDATA[
+ 		SELECT oc_id, oc_title, oc_start_date, oc_end_date, classroom_name, learning_status, course_end_date 
+		FROM oc_de_co_his_drop_view 
+		WHERE oc_start_date < SYSDATE 
+		AND learning_status = '수료 예정' 
+		AND student_id = #{student_id} 
+		ORDER BY oc_id
+		]]>
+	</select>
+	
+	<select id="studentSearch_ds" resultType="com.test.domain.Manager">
+		SELECT student_id, name_, ssn, phone, initial_reg_date, registration_count, deleteCheck 
+		FROM manager_52_view 
+		WHERE name_ = #{name_}
+		ORDER BY student_id
+	</select>
+	
+	<select id="studentSearch" resultType="com.test.domain.Manager">
+		<![CDATA[
+		SELECT student_id, name_, ssn, phone, initial_reg_date, registration_count
+		FROM student_detail_view 
+		WHERE INSTR(name_, #{name_}) > 0 
+		ORDER BY student_id
+		]]>
+	</select>
+	
+	<select id="ocSearch" resultType="com.test.domain.Manager">
+		SELECT oc_id, oc_title, oc_start_date, oc_end_date, classroom_name, learning_status, course_end_date 
+		FROM oc_de_co_his_drop_view 
+		WHERE student_id = #{student_id} 
+		ORDER BY oc_id
+	</select>
+		
+	<select id="ocList61" resultType="com.test.domain.Manager">
+	<![CDATA[	SELECT oc_id, oc_title, oc_start_date, oc_end_date, classroom_name, subject_offered_number, registerred_number, 
+			CASE WHEN (SYSDATE>oc_start_date AND SYSDATE<oc_end_date) THEN '강의중'
+				 WHEN (SYSDATE<oc_start_date) THEN '강의예정' WHEN (SYSDATE > oc_end_date) THEN '강의종료' 
+			END course_status 
+		FROM oc_detail_count_view 
+		ORDER BY oc_id ]]>
+	</select>
+				
+	<select id="osInfoSearch" resultType="com.test.domain.Manager">
+		SELECT os_id, os_name, os_start_date, os_end_date, textbook_title, publisher, isbn, name_, profile_img, available_subjects, oc_title, oc_start_date, oc_end_date, classroom_name, attendance_percentage, writing_percentage, practice_percentage, exam_date, exam_file 
+		FROM manager_61_view 
+		WHERE oc_id = #{oc_id} 
+		ORDER BY os_id
+	</select>	
+				
+	<select id="studentScoreList" resultType="com.test.domain.Manager">
+		SELECT sdv.student_id, sdv.name_, ssn, sdv.phone, attendance_score, writing_score, practice_score, (attendance_score+writing_score+practice_score) AS total_score 
+		FROM student_detail_view sdv, OS_LEARNING_STATUS_SCORE_VIEW ov 
+		WHERE sdv.student_id = ov.student_id(+) 
+		AND os_id = #{os_id} 
+		ORDER BY os_id, student_id
+	</select>	
+	
+	<select id="studentInfo" resultType="com.test.domain.Manager">
+		SELECT student_id, name_, ssn 
+		FROM student_detail_view 
+		WHERE student_id = #{student_id}
+	</select>
+	
+	<select id="stu_scoreSearch" resultType="com.test.domain.Manager">
+		SELECT osv.os_id, os_name, score_id, os_start_date, os_end_date, textbook_title, osv.name_, osv.profile_img, available_subjects, attendance_percentage, writing_percentage, practice_percentage, attendance_score, writing_score, practice_score, total_score, exam_date, exam_file 
+		FROM OS_DE_LOGIN_PERCENTAGES_VIEW osv, OS_LEARNING_STATUS_SCORE_VIEW lsv, exams e 
+		WHERE osv.os_id=lsv.os_id(+) 
+		AND osv.os_id=e.os_id(+) 
+		AND student_id=#{student_id} 
+		AND osv.oc_id=#{oc_id}
+		ORDER BY osv.os_id
+	</select>	
+	
+	<select id="osInfo" resultType="com.test.domain.Manager">
+		SELECT oc_id, oc_title, os_id, os_name, os_start_date, os_end_date 
+		FROM oc_os_login_detail_view 
+		WHERE os_id=#{os_id}
+	</select>
+
+	<select id="getProfileImgName" resultType="com.test.domain.Manager">
+		SELECT profile_img 
+		FROM login
+		WHERE login_id=#{login_id}
+	</select>
+	
+	<select id="availableSubjectCheck" resultType="com.test.domain.Manager">
+		SELECT COUNT(*) count 
+		FROM(SELECT instructor_id, bs_id FROM AVAILABLE_SUBJECTS WHERE bs_id=#{bs_id} AND instructor_id=#{instructor_id})
+	</select>
+	
+	<insert id="bcAdd">
+		INSERT INTO basic_courses(bc_id, bc_title) 
+		VALUES (CONCAT('BC', LPAD(SUBSTR(NVL((SELECT MAX(bc_id) FROM basic_courses),'BC000'),3)+1, 3, 0)), #{bc_title})
+	</insert>
+	
+	<insert id="bsAdd">
+		INSERT INTO basic_subjects(bs_id, bs_name) 
+		VALUES (CONCAT('BS', LPAD(SUBSTR(NVL((SELECT MAX(bs_id) FROM basic_subjects),'BS000'),3)+1, 3, 0)), #{bs_name})
+	</insert>
+	
+	<insert id="classroomAdd">
+		INSERT INTO classrooms(classroom_id, classroom_name, maximum, manager_id) 
+		VALUES (CONCAT('CL', LPAD(SUBSTR(NVL((SELECT MAX(classroom_id) FROM classrooms),'CL000'),3)+1, 3, 0)), #{classroom_name}, #{maximum}, #{manager_id})
+	</insert>
+	
+	<insert id="textbookAdd">
+		INSERT INTO textbooks(textbook_id, textbook_title, publisher, isbn) 
+		VALUES(CONCAT('TX', LPAD(SUBSTR(NVL((SELECT MAX(textbook_id) FROM textbooks),'TX000'),3)+1, 3, 0)), #{textbook_title}, #{publisher}, #{isbn})
+	</insert>
+	
+	<insert id="instructorAdd_1">
+		INSERT INTO login(name_, ssn, phone, initial_reg_date, profile_img, pw, access_id, login_id) 
+		VALUES (#{name_}, #{ssn}, #{phone}, #{initial_reg_date}, #{profile_img}, #{ssn}, 'LV002', CONCAT('S', LPAD(SUBSTR(NVL((SELECT MAX(login_id) FROM login),'S000'),2)+1, 3, 0)))
+	</insert>
+	
+	<insert id="instructorAdd_2">
+		INSERT INTO instructors(instructor_id, instructor_reg_date) 
+		VALUES ((SELECT login_id FROM login WHERE name_=#{name_} AND ssn=#{ssn}), #{initial_reg_date})
+	</insert>
+	
+	<insert id="instructorAdd_3">
+		INSERT INTO available_subjects(instructor_id, bs_id) 
+		VALUES((SELECT login_id FROM login WHERE name_=#{name_} AND ssn=#{ssn}), #{bs_id})
+	</insert>
+	
+	<delete id="instructorUpdate_1">
+		DELETE FROM available_subjects WHERE instructor_id = #{instructor_id}
+	</delete>
+	
+	<insert id="instructorUpdate_2">
+		INSERT INTO available_subjects VALUES (#{instructor_id}, #{bs_id})
+	</insert>
+	
+	<insert id="inst_availableSubjectAdd">
+		INSERT INTO available_subjects(instructor_id, bs_id) 
+		VALUES((SELECT login_id FROM login WHERE name_=#{name_} AND ssn=#{ssn}), #{bs_id})
+	</insert>
+	
+	<insert id="ocAdd">
+		INSERT INTO offered_courses(oc_id, oc_start_date, oc_end_date, classroom_id, bc_id) 
+		VALUES (CONCAT('OC', LPAD(SUBSTR(NVL((SELECT MAX(oc_id) FROM offered_courses),'OC000'),3)+1, 3, 0)),  #{oc_start_date}, #{oc_end_date},#{classroom_id},#{bc_id})
+	</insert>
+	
+	<insert id="osAdd">
+		INSERT INTO offered_subjects(os_id, os_start_date, os_end_date, bs_id, textbook_id, instructor_id, oc_id) 
+		VALUES(CONCAT('OS', LPAD(SUBSTR(NVL((SELECT MAX(os_id) FROM offered_subjects),'OS000'),3)+1, 3, 0)), #{os_start_date}, #{os_end_date}, #{bs_id}, #{textbook_id}, #{instructor_id}, #{oc_id})
+	</insert>
+	
+	<insert id="studentDropout">
+		INSERT INTO dropouts(oc_id, student_id, dropout_date) VALUES (#{oc_id}, #{student_id}, #{dropout_date})
+	</insert>
+	
+	<insert id="studentAdd_1">
+		INSERT INTO login (name_, ssn, phone, initial_reg_date, profile_img, pw, access_id, login_id) 
+		VALUES (#{name_}, #{ssn}, #{phone}, #{initial_reg_date}, #{profile_img}, #{ssn}, 'LV003', CONCAT('S', LPAD(SUBSTR(NVL((SELECT MAX(login_id) FROM login),'S000'),2)+1, 3, 0)))
+	</insert>
+	
+	<insert id="studentAdd_2">
+		INSERT INTO students (student_id, student_reg_date) 
+		VALUES (CONCAT('S', LPAD(SUBSTR(NVL((SELECT MAX(login_id) FROM login),'S000'),2), 3, 0)), #{initial_reg_date})	
+	</insert>
+	
+	<insert id="studentOcAdd">
+		INSERT INTO course_history (oc_id, student_id) VALUES (#{oc_id}, #{student_id})
+	</insert>
+	
+	<delete id="bcDelete">
+		DELETE FROM basic_courses 
+		WHERE bc_id=#{bc_id}
+	</delete>
+	
+	<delete id="bsDelete">
+		DELETE FROM basic_subjects 
+		WHERE bs_id=#{bs_id}
+	</delete>
+	
+	<delete id="classroomDelete">
+		DELETE FROM classrooms 
+		WHERE classroom_id=#{classroom_id}
+	</delete>
+	
+	<delete id="textbookDelete">
+		DELETE FROM textbooks 
+		WHERE textbook_id=#{textbook_id}
+	</delete>
+	
+	<delete id="instructorDelete">
+		DELETE FROM login 
+		WHERE login_id=#{login_id} 
+		AND access_id='LV002'
+	</delete>
+	
+	<delete id="ocDelete">
+		DELETE FROM manager_33_view WHERE oc_id=#{oc_id}
+	</delete>
+	
+	<delete id="osDelete">
+		DELETE FROM offered_subjects WHERE os_id = #{os_id}
+	</delete>	
+	
+	<delete id="courseCancel">
+		DELETE FROM course_history 
+		WHERE oc_id = #{oc_id} 
+		AND student_id = #{student_id}
+	</delete>	
+
+	<delete id="studentDelete">
+		DELETE FROM login WHERE login_id = #{student_id}
+	</delete>			
+
+	
+
+	<select id="maxID" resultType="Integer">
+		select max(id) from Student
+	</select>
+
+	<insert id="marksAdd">
+		insert into Marks(sid, marks, year) values (#{sid}, #{marks}, #{year})
+	</insert>
+
+</mapper> 

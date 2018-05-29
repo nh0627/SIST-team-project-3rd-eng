@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mapper.StudentMapper">
+
+	<select id="studentList" resultType="com.test.domain.Student">
+		SELECT student_id, name_, ssn, phone, initial_reg_date, registration_count 
+		FROM student_detail_view 
+		WHERE student_id = #{student_id} 
+		ORDER BY student_id
+	</select>
+
+	<select id="studentCourseList" resultType="com.test.domain.Student">
+		SELECT oc_id, oc_title, oc_start_date,oc_end_date, classroom_name, learning_status, course_end_date, (SELECT COUNT(attendance_score) FROM os_learning_status_score_view WHERE oc_id=v.oc_id AND student_id=v.student_id GROUP BY oc_id) score_status 
+		FROM oc_de_co_his_drop_view v 
+		WHERE student_id = #{student_id}  
+		ORDER BY oc_id DESC
+	</select>
+	
+	<select id="scoreList" resultType="com.test.domain.Student">
+		SELECT os_id, os_name, os_start_date, os_end_date, textbook_title, publisher, isbn, name_, profile_img, attendance_percentage, writing_percentage, practice_percentage, attendance_score, writing_score, practice_score, total_score, exam_date, exam_file, available_subjects 
+		FROM os_de_lo_per_sco_ex_view 
+		WHERE student_id = #{student_id}  
+		AND oc_id = #{oc_id}  
+		ORDER BY os_id
+	</select>
+
+	<select id="ocInfo" resultType="com.test.domain.Student">
+		SELECT oc_title, oc_start_date, oc_end_date 
+		FROM oc_detail_view
+		WHERE oc_id = #{oc_id}
+	</select>	
+
+</mapper>  
