@@ -11,7 +11,7 @@ This program is a web score management system based on Spring MVC and MyBatis to
 
 ### Instructor
 * View Personal Info - Name, Phone, Initial Registered Date, Available Subjects
-* View Schedule -View an instructor’s personal class schedule, and check a list of students byeach course/subject
+* View Schedule -View an instructor’s personal class schedule, and check a list of students by each course/subject
 * Manage Test Info - Insert and delete attendance, writing and practice score-percentage and a date of exam and exam file by each subject after it finishes
 * Manage Score - Grade and delete a student’s score by each subject
 
