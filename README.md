@@ -5,7 +5,7 @@ This program is a web score management system based on Spring MVC and MyBatis to
 * Java, MySQL, JSP, Servlet, Spring MVC Framework and MyBatis
 
 ## Feature
-### Stuent
+### Student
 * View Personal Info - Name, Phone, Initial Registered Date
 * View Score - View a List of courses that a student is attending, detailed information of courses and subjects, exam information, exam scores
 
