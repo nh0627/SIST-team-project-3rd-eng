@@ -2,8 +2,11 @@
 This program is a web score management system based on Spring MVC and MyBatis to process necessary information for the overall educational operations of (tentatively named) the SIST Education Center. In this system users can use features of the program according to their user rights after login. A student account has a right to check out their courses and grades. Instructor account has rights to manage course, exam and grade information. Manager has rights to handle overall features of the program.
 
 ## Technology
-* Java, MySQL, JSP, Servlet, Spring MVC Framework and MyBatis
-
+* Java1.8, JDBC, JSP2.3, Servlet3.1, EL3.0, JSTL1.2
+* HTML5, CSS3, Javascript1.8.5, jQuery3.2.1, Bootstrap3.3.7
+* Spring4.1, SpringMVC, SpringJDBC, MyBatis3.4,
+* Oracle 11g XE
+* XML, Ajax, JSON, Interpark Book Api,
 ## Feature
 ### Student
 * View Personal Info - Name, Phone, Initial Registered Date
