@@ -6,7 +6,7 @@ This program is a web score management system based on Spring MVC and MyBatis to
 * HTML5, CSS3, Javascript1.8.5, jQuery3.2.1, Bootstrap3.3.7
 * Spring4.1, SpringMVC, SpringJDBC, MyBatis3.4,
 * Oracle 11g XE
-* XML, Ajax, JSON, Interpark Book Api,
+* XML, Ajax, JSON, Interpark Book Api
 ## Feature
 ### Student
 * View Personal Info - Name, Phone, Initial Registered Date
@@ -27,6 +27,9 @@ This program is a web score management system based on Spring MVC and MyBatis to
 * Student - <https://youtu.be/GALUBkGqN5Y>
 * Instructor - <https://youtu.be/tfNqw0qo15E>
 * Manager - <https://youtu.be/qsTqO9MJmME>
+
+## Template Author
+[Colorlib](https://colorlib.com)
 
 ## Database Table
 ![data-schema](img/final-schema.png)
