@@ -1,5 +1,5 @@
 # SIST Score Management System
-This program is a web score management system based on Spring MVC and MyBatis to process necessary information for the overall educational operations of (tentatively named) the SIST Education Center. In this system users can use features of the program according to their user rights after login. A student account has a right to check out their courses and grades. Instructor account has rights to manage course, exam and grade information. Manager has rights to handle overall features of the program.
+This program is a web score management system based on Spring MVC and MyBatis to process necessary information for the overall educational operations of (tentatively named) the SIST Education Center. In this system, users can use features of the program according to their user rights after login. A student account has a right to check out their courses and grades. Instructor account has rights to manage course, exam and grade information. The manager has the rights to handle the overall features of the program.
 
 ## Technology
 * Java1.8, JDBC, JSP2.3, Servlet3.1, EL3.0, JSTL1.2
