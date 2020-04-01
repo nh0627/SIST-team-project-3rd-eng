@@ -6,7 +6,6 @@ The system is for web score management based on Spring MVC and MyBatis to proces
 * HTML5, CSS3, Javascript1.8.5, jQuery3.2.1, Bootstrap3.3.7
 * Spring4.1, SpringMVC, SpringJDBC, MyBatis3.4,
 * Oracle 11g XE
-* XML, Ajax, JSON, Interpark Book Api
 
 ## Features
 ### Student
