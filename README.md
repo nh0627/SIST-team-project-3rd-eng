@@ -1,4 +1,4 @@
-# SIST Score Management System (2018)
+# SIST Score Management System👩🏻‍🏫(2018)
 The system is for web score management based on Spring MVC and MyBatis to process necessary information for overall educational operations of (fictionally named) SIST Education Center. In the system, a user can use features after login according to his/her authority. A student account has authority to retrieve his/her courses and grades. An instructor account has authority to manage course, exam and grade. A manager account has authority to handle overall features of the system.
 
 ## Specification
